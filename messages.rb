@@ -7,6 +7,6 @@ module Messages
   def ask_name
     puts "Введите ваше имя."
   end
-  
+
 end
 
