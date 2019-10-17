@@ -1,4 +1,5 @@
 class Bank
+  attr_accessor :money
 
   DEFAULT_MONEY_AMOUNT = 100
   DEFAULT_BET = 10

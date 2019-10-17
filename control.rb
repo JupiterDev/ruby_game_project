@@ -14,6 +14,9 @@ class Control
   end
 
   def start
+    # puts @player.bank.money
+    # puts @dealer.bank.money
+
     ask_name                    # запрос имени пользователя
     set_user_name               # запись имени
     greeting(@player.name)      # приветствие
@@ -25,6 +28,11 @@ class Control
     give_cards(2, @dealer)      # отдаем дилеру 2 карты
     show_dealer_hand(true)      # вывести на экран руку дилера
     # show_dealer_points        # вывести очки дилера
+
+    make_bets                   # игрок и дилер делают ставки
+
+    puts @player.bank.money
+    puts @dealer.bank.money
   end
 
   def set_user_name
@@ -61,4 +69,9 @@ class Control
   #   dealer_points
   #   puts @dealer.hand.hand_worth
   # end
+
+  def make_bets
+    @player.bank.make_a_bet
+    @dealer.bank.make_a_bet
+  end
 end
