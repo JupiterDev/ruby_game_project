@@ -15,7 +15,6 @@ class Control
     greeting
     ask_name
     set_user_name
-    puts @player.name
   end
 
   def set_user_name
