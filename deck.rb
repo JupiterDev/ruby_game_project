@@ -18,4 +18,8 @@ class Deck
 			end
 		end
 	end
+
+	def take_a_card
+		@card_set.sample
+	end
 end
