@@ -9,12 +9,20 @@ module Messages
   end
 
   def user_hand
-    puts "Ваша рука:"
+    print "Ваша рука: "
+  end
+
+  def user_points
+    print "Ваши очки: "
   end
 
   def dealer_hand
-    puts "Рука дилера:"
+    print "Рука дилера: "
   end
+
+  # def dealer_points
+  #   print "Очки дилера: "
+  # end
 
 end
 

@@ -20,9 +20,11 @@ class Control
 
     give_cards(2, @player)      # отдаем пользователю 2 карты
     show_user_his_hand          # вывести на экран "руку" пользователя
+    show_user_points            # вывести очки пользователя
 
     give_cards(2, @dealer)      # отдаем дилеру 2 карты
-    show_dealer_hand(true) # вывести на экран руку дилера
+    show_dealer_hand(true)      # вывести на экран руку дилера
+    # show_dealer_points        # вывести очки дилера
   end
 
   def set_user_name
@@ -40,6 +42,11 @@ class Control
     puts "#{@player.hand.cards[0].card_title}#{@player.hand.cards[0].card_suit} | #{@player.hand.cards[1].card_title}#{@player.hand.cards[1].card_suit}"
   end
 
+  def show_user_points
+    user_points
+    puts @player.hand.hand_worth
+  end
+
   def show_dealer_hand(hidden)
     dealer_hand
     if hidden
@@ -49,4 +56,9 @@ class Control
     else
     end
   end
+
+  # def show_dealer_points
+  #   dealer_points
+  #   puts @dealer.hand.hand_worth
+  # end
 end
