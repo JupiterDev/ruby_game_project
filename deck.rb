@@ -20,6 +20,6 @@ class Deck
 	end
 
 	def take_a_card
-		@card_set.sample
+		@card_set.delete(@card_set.sample)
 	end
 end

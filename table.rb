@@ -1,6 +1,8 @@
 require_relative 'deck'
 
 class Table
+  attr_reader :deck
+
   def initialize
     @deck = Deck.new
   end

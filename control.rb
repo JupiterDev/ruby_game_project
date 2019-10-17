@@ -14,14 +14,15 @@ class Control
   end
 
   def start
-    greeting                    # приветствие
     ask_name                    # запрос имени пользователя
     set_user_name               # запись имени
+    greeting(@player.name)      # приветствие
 
-    give_cards(2, @player)       # отдаем пользователю 2 карты
-    give_cards(2, @dealer)       # отдаем дилеру 2 карты
+    give_cards(2, @player)      # отдаем пользователю 2 карты
+    show_user_his_hand          # вывести на экран "руку" пользователя
 
-    puts @player.hand.cards
+    give_cards(2, @dealer)      # отдаем дилеру 2 карты
+    show_dealer_hand(true) # вывести на экран руку дилера
   end
 
   def set_user_name
@@ -32,7 +33,20 @@ class Control
     cards = []
     number.times { cards << @table.take_a_card }
     object.hand.add_cards(cards)
-    # eval("%#{object}").hand.add_cards()
   end
 
+  def show_user_his_hand
+    user_hand
+    puts "#{@player.hand.cards[0].card_title}#{@player.hand.cards[0].card_suit} | #{@player.hand.cards[1].card_title}#{@player.hand.cards[1].card_suit}"
+  end
+
+  def show_dealer_hand(hidden)
+    dealer_hand
+    if hidden
+      hidden_hand = []
+      @dealer.hand.cards.length.times {hidden_hand << "**"}
+      puts hidden_hand.join(" | ")
+    else
+    end
+  end
 end
