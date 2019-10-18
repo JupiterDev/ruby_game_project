@@ -7,6 +7,7 @@ class Hand
   end
 
   def add_cards(cards)
+    cards = [] << cards if cards.instance_of? Card
     cards.each { |card| @cards << card }
     count_worth
   end
