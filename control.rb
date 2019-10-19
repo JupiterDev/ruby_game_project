@@ -13,13 +13,16 @@ class Control
     @table = Table.new
   end
 
-  def start
-    # puts @player.bank.money
-    # puts @dealer.bank.money
-
+  def begin
     ask_name                    # запрос имени пользователя
     set_user_name               # запись имени
     greeting(@player.name)      # приветствие
+
+    start
+  end
+
+  def start
+    reset_data
 
     give_cards(2, @player)      # отдаем пользователю 2 карты
     show_user_his_hand          # вывести на экран "руку" пользователя
@@ -27,7 +30,6 @@ class Control
 
     give_cards(2, @dealer)      # отдаем дилеру 2 карты
     show_dealer_hand(true)      # вывести на экран руку дилера
-    # show_dealer_points        # вывести очки дилера
 
     make_bets                   # игрок и дилер делают ставки
 
@@ -35,8 +37,11 @@ class Control
 
     choose_a_winner             # выбирается победитель
 
-    # puts @player.bank.money
-    # puts @dealer.bank.money
+  end
+
+  def reset_data
+    @player.reset_hand          # обнуляем карты в руке
+    @dealer.reset_hand          # обнуляем карты в руке
   end
 
   def set_user_name
@@ -56,7 +61,6 @@ class Control
       cards << "#{card.card_title}#{card.card_suit}"
     end
     puts cards.join(" | ")
-    # puts "#{@player.hand.cards[0].card_title}#{@player.hand.cards[0].card_suit} | #{@player.hand.cards[1].card_title}#{@player.hand.cards[1].card_suit}"
   end
 
   def show_user_points
@@ -76,7 +80,6 @@ class Control
         cards << "#{card.card_title}#{card.card_suit}"
       end
       puts cards.join(" | ")
-      # puts "#{@dealer.hand.cards[0].card_title}#{@dealer.hand.cards[0].card_suit} | #{@dealer.hand.cards[1].card_title}#{@dealer.hand.cards[1].card_suit}"
     end
   end
 
@@ -88,63 +91,64 @@ class Control
   def make_bets
     @player.bank.make_a_bet
     @dealer.bank.make_a_bet
+
+    collect_money
+  end
+
+  def collect_money
+    money = @player.bank.default_bet + @dealer.bank.default_bet
+    @table.money_buffer = money
   end
 
   def make_actions
-    # until (@player.hand.cards.length == 3 && @dealer.hand.cards.length == 3) || open_cards do
-    #   player_action
-    #   dealer_action
-    # end
-    show_cards = false
+    open_cards = false
 
     loop do
       player_action
       dealer_action
-      break if @player.hand.cards.length == 3 && @dealer.hand.cards.length == 3
+      break if @player.hand.cards.length == 3 && @dealer.hand.cards.length == 3 || open_cards
     end
   end
 
   def player_action
+    border
     action_selection
     action = gets.chomp.to_i
     case action
     when 1
       skip_a_move
     when 2
+      player_take_a_card
       add_card(@player)
+      show_user_his_hand
+      show_user_points
     when 3
       show_cards
     else
       wrong_input
     end
+    border
   end
-
-  # def check_cards_count
-  #   break if @player.hand.cards.length == 3 && @dealer.hand.cards.length
-  # end
 
   def skip_a_move
     return
   end
 
   def add_card(object)
-    object.hand.add_cards(@table.take_a_card) if object.hand.cards.length < 3
-    show_user_his_hand
-    show_dealer_hand(true)
+    object.hand.add_cards(@table.take_a_card)
   end
 
   def show_cards
-    # break true
-    show_cards = true
+    open_cards = true
+    choose_a_winner
   end
 
   def dealer_action
-    # check_cards_count
-    if @dealer.hand.hand_worth > 16
-      return
-    else
+    if @dealer.hand.hand_worth < 16
       dealer_take_a_card
       add_card(@dealer)
+    else
+      dealer_skiped_the_action
     end
     show_dealer_hand(true)
   end
@@ -154,12 +158,53 @@ class Control
     show_user_points
     show_dealer_hand(false)
     show_dealer_points
-    if @player.hand.hand_worth > 21 || @dealer.hand.hand_worth > @player.hand.hand_worth
+    if @player.hand.hand_worth > 21 || @dealer.hand.hand_worth > @player.hand.hand_worth && @dealer.hand.hand_worth < 22
       dealer_win
-    elsif @player.hand.hand_worth > @dealer.hand.hand_worth
+      distribute_bets(@dealer)
+    elsif @player.hand.hand_worth > @dealer.hand.hand_worth || @dealer.hand.hand_worth > @player.hand.hand_worth && @dealer.hand.hand_worth > 21
       player_win
-    else
+      distribute_bets(@user)
+    elsif @player.hand.hand_worth == @dealer.hand.hand_worth
       tie
+      distribute_bets
+    end
+    show_user_bank
+    show_dealer_bank
+    restart
+  end
+
+  def distribute_bets(winner = "tie")
+    if winner == @user
+      @player.bank.money += @table.money_buffer
+      @table.money_buffer = 0
+    elsif winner == @dealer
+      @dealer.bank.money += @table.money_buffer
+      @table.money_buffer = 0
+    else
+      @player.bank.money += @table.money_buffer / 2
+      @dealer.bank.money += @table.money_buffer / 2
+      @table.money_buffer = 0
+    end
+  end
+
+  def show_user_bank
+    user_bank(@player.bank.money)
+  end
+
+  def show_dealer_bank
+    dealer_bank(@dealer.bank.money)
+  end
+
+  def restart
+    border
+    restart_game
+    answer = gets.chomp.to_i
+    if answer == 1
+      start
+    elsif answer == 2
+      abort end_game
+    else
+      wrong_input
     end
   end
 end

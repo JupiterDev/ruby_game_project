@@ -10,4 +10,8 @@ class Player
     @hand = Hand.new
   end
 
+  def reset_hand
+    @hand = Hand.new
+  end
+
 end

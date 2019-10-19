@@ -12,4 +12,8 @@ class Bank
     @money -= DEFAULT_BET if @money >= DEFAULT_BET
   end
 
+  def default_bet
+    DEFAULT_BET
+  end
+
 end

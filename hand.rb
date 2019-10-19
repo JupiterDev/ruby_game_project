@@ -13,6 +13,15 @@ class Hand
   end
 
   def count_worth
-    @cards.each { |card| @hand_worth += card.card_worth }
+    @hand_worth = 0
+    @cards.each do |card|
+      if card.card_worth == 1 && @hand_worth < 11
+        @hand_worth += 11
+      elsif card.card_worth == 1 && @hand_worth >= 11
+        @hand_worth += 1
+      else
+        @hand_worth += card.card_worth
+      end
+    end
   end
 end

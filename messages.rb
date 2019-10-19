@@ -31,8 +31,16 @@ module Messages
          "3 - Открыть карты"
   end
 
+  def player_take_a_card
+    puts "Вы взяли карту."
+  end
+
   def dealer_take_a_card
     puts "Дилер взял карту."
+  end
+
+  def dealer_skiped_the_action
+    puts "Дилер пропустил ход."
   end
 
   def wrong_input
@@ -40,7 +48,7 @@ module Messages
   end
 
   def player_win
-    puts "Победил игрок."
+    puts "Поздравляем! Вы победили."
   end
 
   def dealer_win
@@ -49,6 +57,28 @@ module Messages
 
   def tie
     puts "Ничья."
+  end
+
+  def user_bank(bank)
+    puts "Ваш банк составляет: #{bank}."
+  end
+
+  def dealer_bank(bank)
+    puts "Банк дилера составляет: #{bank}."
+  end
+
+  def border
+    puts "--------------------"
+  end
+
+  def restart_game
+    puts "Сыграть еще раз?\n" \
+         "1 - Да.\n" \
+         "2 - Нет, завершить игру."
+  end
+
+  def end_game
+    "Игра завершена."
   end
 
 end
