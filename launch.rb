@@ -1,3 +1,5 @@
 require_relative 'control'
+require_relative 'interface'
 
-Control.new.begin
+interface = Interface.new
+Control.new(interface).begin

@@ -1,22 +1,21 @@
-require_relative 'messages'
 require_relative 'bank'
 require_relative 'player'
 require_relative 'dealer'
 require_relative 'table'
 
 class Control
-  include Messages   # вынес все puts в отдельный модуль
 
-  def initialize
+  def initialize(interface)
+    @interface = interface
     @player = Player.new
     @dealer = Dealer.new
     @table = Table.new
   end
 
   def begin
-    ask_name                    # запрос имени пользователя
-    set_user_name               # запись имени
-    greeting(@player.name)      # приветствие
+    show_name_question                     # запрос имени пользователя
+    get_user_name                          # получение и запись имени
+    @interface.greeting(@player.name)      # приветствие
 
     start
   end
@@ -44,8 +43,12 @@ class Control
     @dealer.reset_hand          # обнуляем карты в руке
   end
 
-  def set_user_name
-    @player.name = gets.chomp
+  def show_name_question
+    @interface.ask_name
+  end
+
+  def get_user_name
+    @player.name = @interface.get_answer
   end
 
   def give_cards(number, object)
@@ -55,37 +58,37 @@ class Control
   end
 
   def show_user_his_hand
-    user_hand
+    @interface.user_hand_message
     cards = []
     @player.hand.cards.each do |card|
       cards << "#{card.card_title}#{card.card_suit}"
     end
-    puts cards.join(" | ")
+    @interface.output(cards.join(" | "))
   end
 
   def show_user_points
-    user_points
-    puts @player.hand.hand_worth
+    @interface.user_points_message
+    @interface.output(@player.hand.hand_worth)
   end
 
   def show_dealer_hand(hidden)
-    dealer_hand
+    @interface.dealer_hand_message
     if hidden
       hidden_hand = []
       @dealer.hand.cards.length.times {hidden_hand << "**"}
-      puts hidden_hand.join(" | ")
+      @interface.output(hidden_hand.join(" | "))
     else
       cards = []
       @dealer.hand.cards.each do |card|
         cards << "#{card.card_title}#{card.card_suit}"
       end
-      puts cards.join(" | ")
+      @interface.output(cards.join(" | "))
     end
   end
 
   def show_dealer_points
-    dealer_points
-    puts @dealer.hand.hand_worth
+    @interface.dealer_points_message
+    @interface.output(@dealer.hand.hand_worth)
   end
 
   def make_bets
@@ -111,23 +114,24 @@ class Control
   end
 
   def player_action
-    border
-    action_selection
-    action = gets.chomp.to_i
+    @interface.borderline
+    @interface.show_action_selection_menu
+    action = @interface.get_answer.to_i
     case action
     when 1
+      @interface.player_skip_the_action_message
       skip_a_move
     when 2
-      player_take_a_card
+      @interface.player_take_a_card_message
       add_card(@player)
       show_user_his_hand
       show_user_points
     when 3
       show_cards
     else
-      wrong_input
+      @interface.wrong_input_message
     end
-    border
+    @interface.borderline
   end
 
   def skip_a_move
@@ -145,31 +149,32 @@ class Control
 
   def dealer_action
     if @dealer.hand.hand_worth < 16
-      dealer_take_a_card
+      @interface.dealer_take_a_card_message
       add_card(@dealer)
     else
-      dealer_skiped_the_action
+      @interface.dealer_skip_the_action_message
     end
     show_dealer_hand(true)
   end
 
   def choose_a_winner
+    @interface.borderline
     show_user_his_hand
     show_user_points
     show_dealer_hand(false)
     show_dealer_points
     if @player.hand.hand_worth > 21 || @dealer.hand.hand_worth > @player.hand.hand_worth && @dealer.hand.hand_worth < 22
-      dealer_win
+      @interface.dealer_win_message
       distribute_bets(@dealer)
     elsif @player.hand.hand_worth > @dealer.hand.hand_worth || @dealer.hand.hand_worth > @player.hand.hand_worth && @dealer.hand.hand_worth > 21
-      player_win
+      @interface.player_win_message
       distribute_bets(@user)
     elsif @player.hand.hand_worth == @dealer.hand.hand_worth
-      tie
+      @interface.tie
       distribute_bets
     end
-    show_user_bank
-    show_dealer_bank
+    @interface.show_user_bank(@player.bank.money)
+    @interface.show_dealer_bank(@dealer.bank.money)
     restart
   end
 
@@ -187,24 +192,16 @@ class Control
     end
   end
 
-  def show_user_bank
-    user_bank(@player.bank.money)
-  end
-
-  def show_dealer_bank
-    dealer_bank(@dealer.bank.money)
-  end
-
   def restart
-    border
-    restart_game
-    answer = gets.chomp.to_i
+    @interface.borderline
+    @interface.show_restart_game_menu
+    answer = @interface.get_answer.to_i
     if answer == 1
       start
     elsif answer == 2
-      abort end_game
+      abort @interface.end_game_message
     else
-      wrong_input
+      @interface.wrong_input_message
     end
   end
 end
