@@ -4,6 +4,7 @@ require_relative 'dealer'
 require_relative 'table'
 
 class Control
+  MAX_POINTS_TO_WIN = 21
 
   def initialize(interface)
     @interface = interface
@@ -134,8 +135,12 @@ class Control
     @interface.borderline
   end
 
+  def overflow?(participant)
+    participant.hand.hand_worth > MAX_POINTS_TO_WIN ? true : false
+  end
+
   def check_overflow
-    if @player.hand.hand_worth > 21
+    if overflow?(@player)
       @interface.scores_overflow_message
       @interface.dealer_win_message
       distribute_bets(@dealer)
@@ -170,10 +175,10 @@ class Control
     show_user_points
     show_dealer_hand(false)
     show_dealer_points
-    if @player.hand.hand_worth > 21 || @dealer.hand.hand_worth > @player.hand.hand_worth && @dealer.hand.hand_worth < 22
+    if overflow?(@player) || @dealer.hand.hand_worth > @player.hand.hand_worth && !overflow?(@dealer)
       @interface.dealer_win_message
       distribute_bets(@dealer)
-    elsif @player.hand.hand_worth > @dealer.hand.hand_worth || @dealer.hand.hand_worth > @player.hand.hand_worth && @dealer.hand.hand_worth > 21
+    elsif @player.hand.hand_worth > @dealer.hand.hand_worth || @dealer.hand.hand_worth > @player.hand.hand_worth && overflow?(@dealer)
       @interface.player_win_message
       distribute_bets(@user)
     elsif @player.hand.hand_worth == @dealer.hand.hand_worth
