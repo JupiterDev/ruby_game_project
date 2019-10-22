@@ -125,12 +125,24 @@ class Control
       add_card(@player)
       show_user_his_hand
       show_user_points
+      check_overflow
     when 3
       show_cards
     else
       @interface.wrong_input_message
     end
     @interface.borderline
+  end
+
+  def check_overflow
+    if @player.hand.hand_worth > 21
+      @interface.scores_overflow_message
+      @interface.dealer_win_message
+      distribute_bets(@dealer)
+      @interface.show_user_bank(@player.bank.money)
+      @interface.show_dealer_bank(@dealer.bank.money)
+      restart
+    end
   end
 
   def add_card(object)
@@ -165,7 +177,7 @@ class Control
       @interface.player_win_message
       distribute_bets(@user)
     elsif @player.hand.hand_worth == @dealer.hand.hand_worth
-      @interface.tie
+      @interface.tie_message
       distribute_bets
     end
     @interface.show_user_bank(@player.bank.money)

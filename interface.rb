@@ -82,6 +82,10 @@ class Interface
     puts "Банк дилера составляет: #{bank}."
   end
 
+  def scores_overflow_message
+    print "Число ваших очков превысило 21. "
+  end
+
   def show_restart_game_menu
     puts "Сыграть еще раз?\n" \
          "1 - Да.\n" \

@@ -14,10 +14,8 @@ class Card
   def count_worth(title)
     if %w[2 3 4 5 6 7 8 9 10].include? title
       @card_worth = title.to_i
-    elsif %w[J Q K].include? title
+    elsif %w[J Q K A].include? title
       @card_worth = 10
-    elsif title == "A"
-      @card_worth = 1
     end
   end
 

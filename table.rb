@@ -11,6 +11,7 @@ class Table
   end
 
   def take_a_card
+    @deck = Deck.new if @deck.card_set.empty?
     @deck.take_a_card
   end
 
