@@ -1,17 +1,11 @@
-require_relative 'bank'
-require_relative 'hand'
+require_relative 'participant'
 
-class Player
-  attr_accessor :name, :bank, :hand
+class Player < Participant
+  attr_accessor :name
 
   def initialize
+    super
     @name = ""
-    @bank = Bank.new
-    @hand = Hand.new
-  end
-
-  def reset_hand
-    @hand = Hand.new
   end
 
 end

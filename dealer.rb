@@ -1,15 +1,7 @@
-require_relative 'bank'
-require_relative 'hand'
+require_relative 'participant'
 
-class Dealer
-  attr_accessor :hand, :bank
-
-  def initialize
-    @bank = Bank.new
-    @hand = Hand.new
-  end
-
-  def reset_hand
-    @hand = Hand.new
+class Dealer < Participant
+  def take_a_card?
+    @hand.hand_worth < 16 ? true : false
   end
 end

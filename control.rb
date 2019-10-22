@@ -120,7 +120,6 @@ class Control
     case action
     when 1
       @interface.player_skip_the_action_message
-      skip_a_move
     when 2
       @interface.player_take_a_card_message
       add_card(@player)
@@ -134,10 +133,6 @@ class Control
     @interface.borderline
   end
 
-  def skip_a_move
-    return
-  end
-
   def add_card(object)
     object.hand.add_cards(@table.take_a_card)
   end
@@ -148,7 +143,7 @@ class Control
   end
 
   def dealer_action
-    if @dealer.hand.hand_worth < 16
+    if @dealer.take_a_card?
       @interface.dealer_take_a_card_message
       add_card(@dealer)
     else
