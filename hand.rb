@@ -22,8 +22,6 @@ class Hand
   end
 
   def check_worth
-    puts "цена руки:"
-    puts @hand_worth
     if @hand_worth > 21 && @cards.any? {|card| card.card_title == "A" && card.card_worth == 11 }
       ace_index = @cards.find_index{ |card| card.card_worth == 11 }
       @cards[ace_index].card_worth = 1
