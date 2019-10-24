@@ -136,7 +136,7 @@ class Control
   end
 
   def overflow?(participant)
-    participant.hand.hand_worth > MAX_POINTS_TO_WIN ? true : false
+    participant.hand.hand_worth > MAX_POINTS_TO_WIN
   end
 
   def check_overflow

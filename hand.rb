@@ -1,5 +1,6 @@
 class Hand
   attr_reader :cards, :hand_worth
+  attr_accessor :cards
 
   def initialize
     @cards = []
@@ -21,14 +22,12 @@ class Hand
   end
 
   def check_worth
+    puts "цена руки:"
+    puts @hand_worth
     if @hand_worth > 21 && @cards.any? {|card| card.card_title == "A" && card.card_worth == 11 }
-      @cards.each do |card|
-        if card.card_title == "A" && card.card_worth == 11
-          card.card_worth = 1
-          @hand_worth -= 10
-          check_worth
-        end
-      end
+      ace_index = @cards.find_index{ |card| card.card_worth == 11 }
+      @cards[ace_index].card_worth = 1
+      @hand_worth -= 10
     end
   end
 end
